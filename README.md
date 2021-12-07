@@ -91,7 +91,7 @@ sudo chown $USER /data/db
 ```
 
 Then add MongoDB to your path  
-`echo -e '\nexport PATH=MongoDB_folder:$PATH' >> ~/.profile && source ~/.profile
+`echo -e '\nexport PATH=MongoDB_folder:$PATH' >> ~/.profile && source ~/.profile`
 
 
 
