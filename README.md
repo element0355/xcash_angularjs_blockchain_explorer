@@ -11,8 +11,7 @@
 * [Configuring NPM If Root](#configuring-npm-if-root)  
 * [Updating NPM](#updating-npm)  
 * [Installing Packages Globally Using NPM](#installing-packages-globally-using-npm)  
-* [NGINX Setup](#nginx-setup)  
-* [Install SSL Certifications](#install-ssl-certifications)  
+* [APACHE Setup](#apace-setup)  
 * [Cloning the Repository](#cloning-the-repository)  
 * [Build Instructions](#build-instructions)  
 
@@ -59,9 +58,9 @@ The following table summarizes the tools and libraries required to run XCASH DPO
 
 Make sure to create an emtpy wallet and put this in `/root/x-network/xcash_wallets/`
 
-
 ### Installation Path
 It is recommend to install in /root/x-network/
+(It says recommend, but do it!!)
 
 
 ### Install System Packages
@@ -71,7 +70,7 @@ Make sure the systems packages list is up to date
 Install the packages  
 `sudo apt install build-essential cmake pkg-config libssl-dev git`
  
-(Optionally) Install the packages for XCASH if you plan to [build XCASH from source](https://github.com/X-CASH-official/X-CASH#compiling-x-cash-from-source)
+Install the packages for XCASH and [build XCASH from source](https://github.com/X-CASH-official/X-CASH#compiling-x-cash-from-source)
 
 
 ### Installing MongoDB From Binaries
@@ -117,13 +116,6 @@ Note if your installing this on a root account then you need to run these additi
 
 
 
-### Updating NPM
-
-Now you need to update NPM  
-`npm install -g npm`
-
-
-
 ### Installing Packages Globally Using NPM
 
 Now you need to install Angular globally  
@@ -134,108 +126,51 @@ Then you need to install Uglifyjs globally
 
 
 
-### NGINX Setup
-Now you need to setup nginx
+### APACHE Setup
+Now you need to setup apache
 
-First install nginx
-`sudo apt install nginx`
+First install apache
+`sudo apt install apache2`
 
-Next setup the sites available. You can use the default file if just hosting one website on the server, or you can make another file if you need to host multiple websites on the server. The location of the files are at `/etc/nginx/sites-available`
+Next setup the sites available. You can use the default file if just hosting one website on the server, or you can make another file if you need to host multiple websites on the server. The location of the files are at `/etc/apache/sites-available`
+
 
 The setup should look like this
 ```
-worker_processes  1;
+<VirtualHost *:80>
 
-events
-{
-  worker_connections  1024;
-}
+        #ServerName www.example.com
+        ServerName explorer.x-delegate.io
+        ServerAlias www.explorer.x-delegate.io
+        ServerAdmin support@x-delegate.io
+        DocumentRoot /var/www/html
 
-http
-{
-  include       mime.types;
-  default_type  application/octet-stream;
-  sendfile        on;
-  keepalive_timeout  65;
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
 
-  server
-  {
-    listen 80; 
-    server_name  www.explorer.x-cash.org explorer.x-cash.org;
-    return 301 https://explorer.x-cash.org$request_uri;
-  }
+        ProxyRequests Off
+        <Proxy *>
+          Order deny,allow
+          Allow from all
+        </Proxy>
 
-  server
-  {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name  www.explorer.x-cash.org explorer.x-cash.org;
-    ssl_certificate /root/x-network/ssl/ssl.crt;
-    ssl_certificate_key /root/x-network/ssl/ssl.key;
-    ssl_prefer_server_ciphers on;
-    ssl_session_cache shared:SSL:50m;
-    ssl_session_timeout 1d;
-    ssl_session_tickets off;
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-    ssl_ciphers 'ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA:ECDHE-ECDSA-DES-CBC3-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA:!DSS';
-    ssl_stapling on;  
-    ssl_ecdh_curve secp384r1;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains; preload";
-    ssl_dhparam /home/ubuntu/ssl/dhparam.pem;
-    # dont load website in iframe
-    add_header X-Frame-Options SAMEORIGIN;
-    # XSS prevention
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-    if ($request_method !~ ^(GET|HEAD|POST)$)
-    {
-      return 400;
-    }
-    # prevent buffer overflow
-    client_body_buffer_size  10k;
-    client_header_buffer_size 10k;
-    client_max_body_size 10k;
-    large_client_header_buffers 10 10k;
-    #DDOS
-    client_body_timeout   10;
-    client_header_timeout 10;
-    keepalive_timeout     5 5;
-    send_timeout          10;
-
-    location /
-    {
-      proxy_pass http://localhost:8000;
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection 'upgrade';
-      proxy_set_header Host $host;
-      proxy_cache_bypass $http_upgrade;
-    }
-    
-    error_page   500 502 503 504  /50x.html;
-    location = /50x.html
-    {
-      root   html;
-    }
-  }
-}
+        ProxyPass / http://127.0.0.1:8000/
+        ProxyPassReverse / http://127.0.0.1:8000/
+        <Location />
+          Order allow,deny
+          Allow from all
+        </Location>
+</VirtualHost>
 ```
 
-Apply the changes to nginx
-`nginx -s reload`
-
-### Install SSL Certifications
-Make a new ssl folder in the x-network folder  
-`mkdir /root/x-network/ssl/`
-
-Copy the SSL Certification and SSL key to the folder
-
+Apply the changes to apache
+`sudo service apache2 restart`
 
 
 ### Cloning the Repository
 ```
 cd ~/Installed-Programs 
-git clone https://github.com/X-CASH-official/XCASH_DPOPS_delegates_website.git
+git clone https://github.com/X-CASH-official/xcash_angularjs_blockchain_explorer.git
 ```
 
 
@@ -244,8 +179,10 @@ git clone https://github.com/X-CASH-official/XCASH_DPOPS_delegates_website.git
 ```
 cd /root/x-network/xcash_angularjs_blockchain_explorer/xcash_angularjs_blockchain_explorer/
 npm update
+npm install
 ng build --prod --aot
 ```
+***If you get an error stating express is not installed run `npm install express`
 
 It will then create a dist folder, compress the javascript using Uglify-JS and move all of the contents of this folder to your `/var/www/html/` folder 
 ``` 
@@ -255,6 +192,8 @@ cd ../
 rm -r /var/www/html/*  
 cp -a dist/* /var/www/html/
 ```
+
+I then used certbot to secure the site.
 
 
 ## How To Setup and Install the Systemd Files
