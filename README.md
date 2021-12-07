@@ -170,19 +170,26 @@ Apply the changes to apache
 ### Cloning the Repository
 ```
 cd ~/Installed-Programs 
-git clone https://github.com/X-CASH-official/xcash_angularjs_blockchain_explorer.git
+git clone https://github.com/element0355/xcash_angularjs_blockchain_explorer.git
 ```
 
 
 ### Build Instructions
 
+Before building you must edit the http-request.service.ts file
+`nano /root/x-networx/xcash_angularjs_blockchain_explorer/xcash_angularjs_blockchain_explorer/src/app/services/http-request.service.ts`
+
+Replace all the URLS that say https://explorer.x-cash.org with the URL you plan on using for your explorer (Lines 12 - 35)
+
 ```
 cd /root/x-network/xcash_angularjs_blockchain_explorer/xcash_angularjs_blockchain_explorer/
+rm package-lock.json (I had to for it to work)
 npm update
 npm install
 ng build --prod --aot
 ```
 ***If you get an error stating express is not installed run `npm install express`
+You may have to run rm -r node_moudles before running npm update and npm install
 
 It will then create a dist folder, compress the javascript using Uglify-JS and move all of the contents of this folder to your `/var/www/html/` folder 
 ``` 
