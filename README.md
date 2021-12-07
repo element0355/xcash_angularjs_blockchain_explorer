@@ -169,7 +169,7 @@ Apply the changes to apache
 
 ### Cloning the Repository
 ```
-cd ~/Installed-Programs 
+cd ~/x-network
 git clone https://github.com/X-CASH-official/xcash_angularjs_blockchain_explorer.git
 ```
 
