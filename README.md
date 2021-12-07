@@ -170,7 +170,7 @@ Apply the changes to apache
 ### Cloning the Repository
 ```
 cd ~/Installed-Programs 
-git clone https://github.com/element0355/xcash_angularjs_blockchain_explorer.git
+git clone https://github.com/X-CASH-official/xcash_angularjs_blockchain_explorer.git
 ```
 
 
