@@ -134,6 +134,15 @@ First install apache
 
 Next setup the sites available. You can use the default file if just hosting one website on the server, or you can make another file if you need to host multiple websites on the server. The location of the files are at `/etc/apache/sites-available`
 
+You must enable these mods for the proxypass to work with apache
+
+```
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+sudo a2enmod proxy_balancer
+sudo a2enmod lbmethod_byrequests
+```
+
 
 The setup should look like this
 ```
