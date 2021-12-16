@@ -5,7 +5,7 @@ Description=restarts the x-cash angularjs blockchain explorer
 Environment=NODE_PORT=8000
 Type=simple
 User=root
-ExecStart=/root/x-network/node-v13.2.0-linux-x64/bin/node --max-old-space-size=8192 /root/x-network/xcash_angularjs_block_explorer/xcash_api/nodejs.js
+ExecStart=/root/x-network/nodejs/bin/node --max-old-space-size=8192 /root/x-network/xcash_angularjs_blockchain_explorer/xcash_api/nodejs.js
 Restart=always
 
 [Install]
