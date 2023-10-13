@@ -124,6 +124,9 @@ Now you need to install Angular globally
 Then you need to install Uglifyjs globally  
 `npm install -g uglify-js` 
 
+npm install express
+npm install
+
 
 
 ### APACHE Setup
