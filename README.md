@@ -119,7 +119,7 @@ Note if your installing this on a root account then you need to run these additi
 ### Installing Packages Globally Using NPM
 
 Now you need to install Angular globally  
-`npm install -g @angular/cli@latest`
+`npm install -g @angular/cli@7.3.9`
 
 Then you need to install Uglifyjs globally  
 `npm install -g uglify-js` 
